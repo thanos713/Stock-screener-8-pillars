@@ -1,6 +1,6 @@
 # Stock screener
 
-Stock screener is an educational software, written in Python, for screening and valuating stocks using data from ycharts.
+Stock screener is an educational software, written in Python, for screening and valuating stocks using data from ycharts (because of that, the code needs to be updated from time to time to correspond to the correct structure of the ycharts code).
 - The screening process (for which I do not claim credit, see below) consists of 8 pillars that value investors frequently use:
 	1) PE ratio < 20
 	2) Profit margin > 10%
