@@ -4,6 +4,7 @@
 # The present code is only for educational purposes.
 
 from statistics import mean
+import sys
 
 from style import * # Contains functions for handling billions (B), millions(M), etc from ycharts and converting them to numbers.
 from plot import make_plot # Contains functions for plotting the financial data.
@@ -43,6 +44,6 @@ def plots(stock):
     make_plot(stock.ticker, stock.cashflows[0]['Date'], stock.cashflows[0]['Free cashflow'], 'Free Cashflow (TTM)', 'FCF ($)')
 
 # Example code for AAPL
-stock = Stocks('PLUG') # <---- ticker 'AAPL'. Essentially the only part that needs to be changed in every execution.
+stock = Stocks('AAPL') # <---- ticker 'AAPL'. Essentially the only part that needs to be changed in every execution.
 do_pillars(stock) # <----- Perform all 8 pillars and print the results. This is basically the "screening". 
 plots(stock)  # <---- Make the relevant (helpful) plots to interpret the 8 pillars: profit margin, revenue, net income, shares outstanding and free cashflow.
