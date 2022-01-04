@@ -15,7 +15,7 @@ class Stocks(object):
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'}
         resp = requests.get(url, headers=headers)
         soup = bs.BeautifulSoup(resp.text, 'lxml')
-        table = soup.find('table', {'class':'histDataTable'})
+        table = soup.find('table', {'class':'table'})
         string = table.find_all('td')[1].text.strip()
         market_cap = string_to_num(string)
         return market_cap
@@ -25,7 +25,7 @@ class Stocks(object):
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'}
         resp = requests.get(url, headers=headers)
         soup = bs.BeautifulSoup(resp.text, 'lxml')
-        table = soup.find('table', {'class':'histDataTable'})
+        table = soup.find('table', {'class':'table'})
         string = table.find_all('td')[1].text.strip()
         string = string.replace('%','')
         dividend = float(string)/100
@@ -37,13 +37,12 @@ class Stocks(object):
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'}
         resp = requests.get(url, headers=headers)
         soup = bs.BeautifulSoup(resp.text, 'lxml')
-        tables = soup.findAll('table', {'class':'statTable'})
-        datas = []
-        for table in tables:        
-            for row in table.find_all('tr')[1:]:
-                data = row.find_all('td')[1].text.strip() 
-                datas.append(data)    
-        pe = datas[15]
+        tables = soup.findAll('table', {'class':'table'})
+        table = tables[0]        
+        for row in table.find_all('tr')[1:]:
+            if row.find_all('td')[0].text.strip()  == 'PE Ratio':
+                pe = row.find_all('td')[1].text.strip()
+                break
         if pe == "--":
             pe = 0.0
             result = "Negative/Problem"
@@ -61,7 +60,7 @@ class Stocks(object):
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'}
         resp = requests.get(url, headers=headers)
         soup = bs.BeautifulSoup(resp.text, 'lxml')
-        tables = soup.findAll('table', {'class':'histDataTable'})
+        tables = soup.findAll('table', {'class':'table'})
         profits = []
         dates = []
         for table in tables:
@@ -73,10 +72,13 @@ class Stocks(object):
                    profit = row.find_all('td')[1].text.strip()
                    if profit != ""  and "K" not in profit and "M" not in profit: #K and M correspond to one-time margins, so we ignore them
                         profit = profit.replace('%','')
-                        profits.append(float(profit))
                         date = row.find_all('td')[0].text.strip()
-                        date = parse(date)
-                        dates.append(date)        
+                        try:
+                            date = parse(date)
+                            dates.append(date) 
+                            profits.append(float(profit))
+                        except:
+                            break
         if len(profits) > 20: #20 corresponds to 20 filings - 5 years
             profits = profits[:20]
         profits = np.array(profits)
@@ -94,7 +96,7 @@ class Stocks(object):
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'}
         resp = requests.get(url, headers=headers)
         soup = bs.BeautifulSoup(resp.text, 'lxml')
-        tables = soup.findAll('table', {'class':'histDataTable'})
+        tables = soup.findAll('table', {'class':'table'})
         revenues = []
         dates = []
         for table in tables:
@@ -104,10 +106,13 @@ class Stocks(object):
                 return 
             for row in table.find_all('tr')[1:]: 
                 revenue = row.find_all('td')[1].text.strip() 
-                revenues.append(string_to_num(revenue))
                 date = row.find_all('td')[0].text.strip()
-                date = parse(date)
-                dates.append(date)
+                try:
+                    date = parse(date)
+                    dates.append(date) 
+                    revenues.append(string_to_num(revenue))
+                except:
+                    break
         if len(revenues) > 20:
             revenues = revenues[:20]
             dates = dates[:20]
@@ -124,7 +129,7 @@ class Stocks(object):
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'}
         resp = requests.get(url, headers=headers)
         soup = bs.BeautifulSoup(resp.text, 'lxml')
-        tables = soup.findAll('table', {'class':'histDataTable'})
+        tables = soup.findAll('table', {'class':'table'})
         incomes = []
         dates = []
         for table in tables:
@@ -134,10 +139,13 @@ class Stocks(object):
                 return 
             for row in table.find_all('tr')[1:]: 
                 income = row.find_all('td')[1].text.strip() 
-                incomes.append(string_to_num(income))
                 date = row.find_all('td')[0].text.strip()
-                date = parse(date)
-                dates.append(date)
+                try:
+                    date = parse(date)
+                    dates.append(date) 
+                    incomes.append(string_to_num(income))
+                except:
+                    break       
         if len(incomes) > 20:
             incomes = incomes[:20]
             dates = dates[:20]
@@ -156,7 +164,7 @@ class Stocks(object):
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'}
         resp = requests.get(url, headers=headers)
         soup = bs.BeautifulSoup(resp.text, 'lxml')
-        tables = soup.findAll('table', {'class':'histDataTable'})
+        tables = soup.findAll('table', {'class':'table'})
         shares = []
         dates = []
         for table in tables:
@@ -165,11 +173,14 @@ class Stocks(object):
                 self.not_found += 1
                 return 
             for row in table.find_all('tr')[1:]: 
-                date = row.find_all('td')[0].text.strip()
-                date = parse(date)            
-                dates.append(date)    
+                date = row.find_all('td')[0].text.strip()  
                 share = row.find_all('td')[1].text.strip()
-                shares.append(string_to_num(share))  
+                try:
+                    date = parse(date)
+                    dates.append(date) 
+                    shares.append(string_to_num(share))  
+                except:
+                    break   
         if len(shares) > 20:
             shares = shares[:20]
             dates = dates[:20]
@@ -186,7 +197,7 @@ class Stocks(object):
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'}
         resp = requests.get(url, headers=headers)
         soup = bs.BeautifulSoup(resp.text, 'lxml')
-        table = soup.find('table', {'class':'histDataTable'})
+        table = soup.find('table', {'class':'table'})
         if table.find_all('tr')[1:2] == []:
             result = "Data not found"
             self.not_found += 1
@@ -194,7 +205,7 @@ class Stocks(object):
         url = 'https://ycharts.com/companies/'+self.ticker+'/liabilities'
         resp = requests.get(url, headers=headers)
         soup = bs.BeautifulSoup(resp.text, 'lxml')
-        table = soup.find('table', {'class':'histDataTable'})
+        table = soup.find('table', {'class':'table'})
         if table.find_all('tr')[1:2] == []:
             result = "Data not found"
             self.not_found += 1
@@ -214,7 +225,7 @@ class Stocks(object):
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'}
         resp = requests.get(url, headers=headers)
         soup = bs.BeautifulSoup(resp.text, 'lxml')
-        tables = soup.findAll('table', {'class':'histDataTable'})
+        tables = soup.findAll('table', {'class':'table'})
         cashflows = []
         dates = []
         for table in tables:
@@ -224,10 +235,13 @@ class Stocks(object):
                 return 
             for row in table.find_all('tr')[1:]: 
                 cashflow = row.find_all('td')[1].text.strip() 
-                cashflows.append(string_to_num(cashflow))
                 date = row.find_all('td')[0].text.strip()
-                date = parse(date)
-                dates.append(date)
+                try:
+                    date = parse(date)
+                    dates.append(date) 
+                    cashflows.append(string_to_num(cashflow))
+                except:
+                    break   
         if len(cashflows) > 20:
             cashflows = cashflows[:20]
             dates = dates[:20]
@@ -267,7 +281,7 @@ class Stocks(object):
         if resp.status_code == 404:
             return 1
         soup = bs.BeautifulSoup(resp.text, 'lxml')
-        table = soup.find('table', {'class':'histDataTable'})
+        table = soup.find('table', {'class':'table'})
         if table == None:
             return -1
         else:
