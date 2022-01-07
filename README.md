@@ -20,9 +20,9 @@ It is important to note that this process is not perfect and there are many modi
 
 *  **main.py** is the driver code. Changing the ticker (in the example 'AAPL') to another stock, should immediately give you the 8 pillars for this stock.
 *  **plot.py** contains the functions necessary to plot the financial data for some of the 8 pillars.
-*  **regression.py** contains a linear regression function necessary for some pillars. 
+*  **regression.py** contains a linear regression function necessary for some pillars that check increases or decreases.
 *  **Stocks.py** contains the "Stocks" class which is the core of the code.
-*  **style.py** contains functions for handling billions (B), millions (M), etc. from ycharts and converting them to numbers; "stylistic" part of the code.
+*  **style.py** contains functions for handling billions (B), millions (M), etc. from ycharts and converting them to numbers; the "stylistic" part of the code.
 
 ## Main libraries used
 
